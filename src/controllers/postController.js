@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const upload = require('../config/upload');
 
 // 글 목록 조회
 const getPosts = async (req, res) => {
@@ -33,6 +34,7 @@ const getPost = async (req, res) => {
 const createPost = async (req, res) => {
     const { title, content } = req.body;
     const user_id = req.user.id;
+    const image = req.file ? '/uploads/' + req.file.filename : null;
 
     if (!title || !content) {
         return res.status(400).json({ message: '제목과 내용을 입력해주세요.' });
@@ -40,8 +42,8 @@ const createPost = async (req, res) => {
 
     try {
         await pool.query(
-            'INSERT INTO posts (user_id, title, content) VALUES (?, ?, ?)',
-            [user_id, title, content]
+            'INSERT INTO posts (user_id, title, content, image) VALUES (?, ?, ?, ?)',
+            [user_id, title, content, image]
         );
         res.status(201).json({ message: '글 작성 완료' });
     } catch (error) {
