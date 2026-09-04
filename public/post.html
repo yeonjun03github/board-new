@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>글 상세</title>
+</head>
+<body>
+<button onclick="window.location.href='/index.html'">목록으로</button>
+<button id="edit-btn" onclick="goEdit()" style="display:none">수정</button>
+<button id="delete-btn" onclick="deletePost()" style="display:none">삭제</button>
+
+<h2 id="title"></h2>
+<p>작성자: <span id="username"></span></p>
+<p>작성일: <span id="created-at"></span></p>
+<hr>
+<p id="content"></p>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    async function loadPost() {
+        const res = await fetch(`/posts/${id}`);
+        const post = await res.json();
+
+        document.getElementById('title').innerText = post.title;
+        document.getElementById('username').innerText = post.username;
+        document.getElementById('content').innerText = post.content;
+        document.getElementById('created-at').innerText = new Date(post.created_at).toLocaleDateString('ko-KR');
+
+        const token = localStorage.getItem('token');
+        if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            if (payload.id === post.user_id) {
+                document.getElementById('edit-btn').style.display = 'inline';
+                document.getElementById('delete-btn').style.display = 'inline';
+            }
+        }
+    }
+
+    function goEdit() {
+        window.location.href = `/edit.html?id=${id}`;
+    }
+
+    async function deletePost() {
+        if (!confirm('삭제하시겠습니까?')) return;
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/posts/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        alert(data.message);
+        window.location.href = '/index.html';
+    }
+
+    loadPost();
+</script>
+</body>
+</html>

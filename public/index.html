@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게시판</title>
+</head>
+<body>
+<h2>게시판</h2>
+<button onclick="window.location.href='/write.html'">글 작성</button>
+<button onclick="logout()">로그아웃</button>
+<table border="1">
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody id="post-list"></tbody>
+</table>
+
+<script>
+    async function loadPosts() {
+        const res = await fetch('/posts');
+        const posts = await res.json();
+
+        const tbody = document.getElementById('post-list');
+        tbody.innerHTML = '';
+
+        posts.forEach(post => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                    <td>${post.id}</td>
+                    <td><a href="/post.html?id=${post.id}">${post.title}</a></td>
+                    <td>${post.username}</td>
+                    <td>${new Date(post.created_at).toLocaleDateString('ko-KR')}</td>
+                `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
+    }
+
+    loadPosts();
+</script>
+</body>
+</html>
