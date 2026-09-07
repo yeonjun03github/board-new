@@ -4,7 +4,7 @@ const getComments = async (req, res) => {
     try {
         const { post_id } = req.params;
         const [rows] = await pool.query(
-            'SELECT comments.id, comments.content, comments.created_at, users.username FROM comments JOIN users ON comments.user_id = users.id WHERE comments.post_id = ? ORDER BY comments.created_at ASC',
+            'SELECT comments.id, comments.content, comments.created_at, comments.user_id, users.username FROM comments JOIN users ON comments.user_id = users.id WHERE comments.post_id = ? ORDER BY comments.created_at ASC',
             [post_id]
         );
         res.json(rows);
