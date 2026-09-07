@@ -93,6 +93,7 @@ const deletePost = async (req, res) => {
         await pool.query('DELETE FROM posts WHERE id = ?', [id]);
         res.json({ message: '글 삭제 완료' });
     } catch (error) {
+        console.error('deletePost 에러:', error);
         res.status(500).json({ message: '서버 오류' });
     }
 };
