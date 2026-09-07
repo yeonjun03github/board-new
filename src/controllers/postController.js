@@ -90,6 +90,7 @@ const deletePost = async (req, res) => {
             return res.status(403).json({ message: '본인 글만 삭제할 수 있습니다.' });
         }
 
+        await pool.query('DELETE FROM comments WHERE post_id = ?', [id]);
         await pool.query('DELETE FROM posts WHERE id = ?', [id]);
         res.json({ message: '글 삭제 완료' });
     } catch (error) {
