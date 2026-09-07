@@ -27,7 +27,7 @@ const createComment = async (req, res) => {
             'INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)',
             [post_id, user_id, content]
         );
-        res.status(201).json({ message: '댓글 작성 완료' });
+        res.status(201).json({ message: '댓글이 성공적으로 작성되었습니다!' });
     } catch (error) {
         res.status(500).json({ message: '서버 오류' });
     }
