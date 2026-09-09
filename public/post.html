@@ -6,23 +6,28 @@
 </head>
 <body>
 <button onclick="window.location.href='/index.html'">목록으로</button>
-<button id="edit-btn" onclick="goEdit()" style="display:none">수정</button>
-<button id="delete-btn" onclick="deletePost()" style="display:none">삭제</button>
 
-<h2 id="title"></h2>
-<p>작성자: <span id="username"></span></p>
-<p>작성일: <span id="created-at"></span></p>
-<hr>
-<p id="content"></p>
-<div id="image-container"></div>
+<p id="not-found-message" style="display:none">존재하지 않는 게시글입니다.</p>
 
-<hr>
-<h3>댓글</h3>
-<div id="comments"></div>
+<div id="post-container" style="display:none">
+    <button id="edit-btn" onclick="goEdit()" style="display:none">수정</button>
+    <button id="delete-btn" onclick="deletePost()" style="display:none">삭제</button>
 
-<textarea id="comment-input" placeholder="댓글을 입력하세요" rows="3" cols="50"></textarea>
-<br>
-<button onclick="submitComment()">댓글 작성</button>
+    <h2 id="title"></h2>
+    <p>작성자: <span id="username"></span></p>
+    <p>작성일: <span id="created-at"></span></p>
+    <hr>
+    <p id="content"></p>
+    <div id="image-container"></div>
+
+    <hr>
+    <h3>댓글</h3>
+    <div id="comments"></div>
+
+    <textarea id="comment-input" placeholder="댓글을 입력하세요" rows="3" cols="50"></textarea>
+    <br>
+    <button onclick="submitComment()">댓글 작성</button>
+</div>
 
 <script>
     const params = new URLSearchParams(window.location.search);
@@ -37,6 +42,13 @@
 
     async function loadPost() {
         const res = await fetch(`/posts/${id}`);
+
+        if (!res.ok) {
+            document.getElementById('not-found-message').style.display = 'block';
+            document.getElementById('post-container').style.display = 'none';
+            return false;
+        }
+
         const post = await res.json();
 
         document.getElementById('title').innerText = post.title;
@@ -55,6 +67,8 @@
             document.getElementById('edit-btn').style.display = 'inline';
             document.getElementById('delete-btn').style.display = 'inline';
         }
+
+        return true;
     }
 
     async function loadComments() {
@@ -120,8 +134,9 @@
         window.location.href = '/index.html';
     }
 
-    loadPost();
-    loadComments();
+    loadPost().then(found => {
+        if (found) loadComments();
+    });
 </script>
 </body>
 </html>
