@@ -21,7 +21,7 @@ const register = async (req, res) => {
         if (error.code === 'ER_DUP_ENTRY') {
             return res.status(409).json({ message: '이미 존재하는 아이디입니다.' });
         }
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
@@ -61,7 +61,7 @@ const login = async (req, res) => {
 
         res.json({ token });
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 

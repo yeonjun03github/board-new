@@ -9,7 +9,7 @@ const getComments = async (req, res) => {
         );
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
@@ -29,7 +29,7 @@ const createComment = async (req, res) => {
         );
         res.status(201).json({ message: '댓글이 성공적으로 작성되었습니다!' });
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
@@ -40,16 +40,16 @@ const deleteComment = async (req, res) => {
 
         const [rows] = await pool.query('SELECT * FROM comments WHERE id = ?', [id]);
         if (rows.length === 0) {
-            return res.status(404).json({ message: '댓글을 찾을 수 없습니다.' });
+            return res.status(404).json({ message: '댓글을 찾을 수 없습니다. 404' });
         }
         if (rows[0].user_id !== user_id) {
-            return res.status(403).json({ message: '본인 댓글만 삭제할 수 있습니다.' });
+            return res.status(403).json({ message: '본인 댓글만 삭제할 수 있습니다. 403' });
         }
 
         await pool.query('DELETE FROM comments WHERE id = ?', [id]);
         res.json({ message: '댓글 삭제 완료' });
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 

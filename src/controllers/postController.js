@@ -9,7 +9,7 @@ const getPosts = async (req, res) => {
         );
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
@@ -22,11 +22,11 @@ const getPost = async (req, res) => {
             [id]
         );
         if (rows.length === 0) {
-            return res.status(404).json({ message: '글을 찾을 수 없습니다.' });
+            return res.status(404).json({ message: '글을 찾을 수 없습니다. 404' });
         }
         res.json(rows[0]);
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
@@ -47,7 +47,7 @@ const createPost = async (req, res) => {
         );
         res.status(201).json({ message: '글 작성 완료' });
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
@@ -60,10 +60,10 @@ const updatePost = async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
         if (rows.length === 0) {
-            return res.status(404).json({ message: '글을 찾을 수 없습니다.' });
+            return res.status(404).json({ message: '글을 찾을 수 없습니다. 404' });
         }
         if (rows[0].user_id !== user_id) {
-            return res.status(403).json({ message: '본인 글만 수정할 수 있습니다.' });
+            return res.status(403).json({ message: '본인 글만 수정할 수 있습니다. 403' });
         }
 
         await pool.query(
@@ -72,7 +72,7 @@ const updatePost = async (req, res) => {
         );
         res.json({ message: '글 수정 완료' });
     } catch (error) {
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
@@ -84,10 +84,10 @@ const deletePost = async (req, res) => {
     try {
         const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
         if (rows.length === 0) {
-            return res.status(404).json({ message: '글을 찾을 수 없습니다.' });
+            return res.status(404).json({ message: '글을 찾을 수 없습니다. 404' });
         }
         if (rows[0].user_id !== user_id) {
-            return res.status(403).json({ message: '본인 글만 삭제할 수 있습니다.' });
+            return res.status(403).json({ message: '본인 글만 삭제할 수 있습니다. 403' });
         }
 
         await pool.query('DELETE FROM comments WHERE post_id = ?', [id]);
@@ -95,7 +95,7 @@ const deletePost = async (req, res) => {
         res.json({ message: '글 삭제 완료' });
     } catch (error) {
         console.error('deletePost 에러:', error);
-        res.status(500).json({ message: '서버 오류' });
+        res.status(500).json({ message: '서버 오류 500' });
     }
 };
 
