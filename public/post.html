@@ -51,6 +51,7 @@
 
         const post = await res.json();
 
+        document.getElementById('post-container').style.display = 'block';
         document.getElementById('title').innerText = post.title;
         document.getElementById('username').innerText = post.username;
         document.getElementById('content').innerText = post.content;
