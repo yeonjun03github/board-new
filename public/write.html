@@ -6,7 +6,7 @@
 </head>
 <body>
 <h2>글 작성</h2>
-<button onclick="window.location.href='/index.html'">목록으로</button>
+<button onclick="goList()">목록으로</button>
 <br><br>
 <input type="text" id="title" placeholder="제목" style="width:400px"><br><br>
 <textarea id="content" rows="10" cols="50" placeholder="내용"></textarea><br><br>
@@ -47,6 +47,32 @@
         } else {
             document.getElementById('message').innerText = data.message;
         }
+
+        function goList() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            if (title.length !== 0 || content.length !== 0) {
+                if (!confirm('작성한 내용이 있습니다. 취소하시겠습니까?')) {
+                    return;
+                }
+            }
+
+            window.location.href = '/index.html';
+        }
+    }
+
+    function goList() {
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+
+        if (title.length !== 0 || content.length !== 0) {
+            if (!confirm('작성한 내용이 있습니다. 취소하시겠습니까?')) {
+                return;
+            }
+        }
+
+        window.location.href = '/index.html';
     }
 </script>
 </body>
