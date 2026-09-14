@@ -1,15 +1,13 @@
-const pool = require('../config/db');
-const upload = require('../config/upload');
+const postService = require('../services/postService');
+const handleError = require('../utils/handleError');
 
 // 글 목록 조회
 const getPosts = async (req, res) => {
     try {
-        const [rows] = await pool.query(
-            'SELECT posts.id, posts.title, posts.created_at, users.username FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC'
-        );
-        res.json(rows);
+        const posts = await postService.getPosts();
+        res.json(posts);
     } catch (error) {
-        res.status(500).json({ message: '서버 오류 500' });
+        handleError(res, error);
     }
 };
 
@@ -17,16 +15,10 @@ const getPosts = async (req, res) => {
 const getPost = async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await pool.query(
-            'SELECT posts.*, users.username FROM posts JOIN users ON posts.user_id = users.id WHERE posts.id = ?',
-            [id]
-        );
-        if (rows.length === 0) {
-            return res.status(404).json({ message: '글을 찾을 수 없습니다. 404' });
-        }
-        res.json(rows[0]);
+        const post = await postService.getPostById(id);
+        res.json(post);
     } catch (error) {
-        res.status(500).json({ message: '서버 오류 500' });
+        handleError(res, error);
     }
 };
 
@@ -36,18 +28,11 @@ const createPost = async (req, res) => {
     const user_id = req.user.id;
     const image = req.file ? '/uploads/' + req.file.filename : null;
 
-    if (!title || !content) {
-        return res.status(400).json({ message: '제목과 내용을 입력해주세요.' });
-    }
-
     try {
-        await pool.query(
-            'INSERT INTO posts (user_id, title, content, image) VALUES (?, ?, ?, ?)',
-            [user_id, title, content, image]
-        );
+        await postService.createPost({ title, content, image, user_id });
         res.status(201).json({ message: '글 작성 완료' });
     } catch (error) {
-        res.status(500).json({ message: '서버 오류 500' });
+        handleError(res, error);
     }
 };
 
@@ -58,21 +43,10 @@ const updatePost = async (req, res) => {
     const user_id = req.user.id;
 
     try {
-        const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
-        if (rows.length === 0) {
-            return res.status(404).json({ message: '글을 찾을 수 없습니다. 404' });
-        }
-        if (rows[0].user_id !== user_id) {
-            return res.status(403).json({ message: '본인 글만 수정할 수 있습니다. 403' });
-        }
-
-        await pool.query(
-            'UPDATE posts SET title = ?, content = ? WHERE id = ?',
-            [title, content, id]
-        );
+        await postService.updatePost(id, { title, content, user_id });
         res.json({ message: '글 수정 완료' });
     } catch (error) {
-        res.status(500).json({ message: '서버 오류 500' });
+        handleError(res, error);
     }
 };
 
@@ -82,20 +56,10 @@ const deletePost = async (req, res) => {
     const user_id = req.user.id;
 
     try {
-        const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
-        if (rows.length === 0) {
-            return res.status(404).json({ message: '글을 찾을 수 없습니다. 404' });
-        }
-        if (rows[0].user_id !== user_id) {
-            return res.status(403).json({ message: '본인 글만 삭제할 수 있습니다. 403' });
-        }
-
-        await pool.query('DELETE FROM comments WHERE post_id = ?', [id]);
-        await pool.query('DELETE FROM posts WHERE id = ?', [id]);
+        await postService.deletePost(id, user_id);
         res.json({ message: '글 삭제 완료' });
     } catch (error) {
-        console.error('deletePost 에러:', error);
-        res.status(500).json({ message: '서버 오류 500' });
+        handleError(res, error);
     }
 };
 
