@@ -16,6 +16,7 @@
     <h2 id="title"></h2>
     <p>작성자: <span id="username"></span></p>
     <p>작성일: <span id="created-at"></span></p>
+    <p>조회수: <span id="views"></span></p>
     <hr>
     <p id="content"></p>
     <div id="image-container"></div>
@@ -56,6 +57,7 @@
         document.getElementById('username').innerText = post.username;
         document.getElementById('content').innerText = post.content;
         document.getElementById('created-at').innerText = new Date(post.created_at).toLocaleDateString('ko-KR');
+        document.getElementById('views').innerText = post.views;
 
         if (post.image) {
             const img = document.createElement('img');

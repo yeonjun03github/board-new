@@ -15,6 +15,7 @@
         <th>제목</th>
         <th>작성자</th>
         <th>작성일</th>
+        <th>조회수</th>
     </tr>
     </thead>
     <tbody id="post-list"></tbody>
@@ -50,6 +51,7 @@
                 <td><a href="/post.html?id=${post.id}">${post.title}</a></td>
                 <td>${post.username}</td>
                 <td>${new Date(post.created_at).toLocaleDateString('ko-KR')}</td>
+                <td>${post.views}</td>
             `;
             tbody.appendChild(tr);
         });
@@ -104,7 +106,7 @@
         window.location.href = '/login.html';
     }
 
-    loadPosts();
+    window.addEventListener('pageshow', loadPosts);
 </script>
 </body>
 </html>

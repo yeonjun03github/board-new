@@ -4,7 +4,7 @@ const AppError = require('../utils/AppError');
 // 글 목록 조회
 const getPosts = async () => {
     const [rows] = await pool.query(
-        'SELECT posts.id, posts.title, posts.created_at, users.username FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC'
+        'SELECT posts.id, posts.title, posts.created_at, posts.views, users.username FROM posts JOIN users ON posts.user_id = users.id ORDER BY posts.created_at DESC'
     );
     return rows;
 };
@@ -18,6 +18,10 @@ const getPostById = async (id) => {
     if (rows.length === 0) {
         throw new AppError(404, '글을 찾을 수 없습니다. 404');
     }
+
+    await pool.query('UPDATE posts SET views = views + 1 WHERE id = ?', [id]);
+    rows[0].views += 1;
+
     return rows[0];
 };
 
