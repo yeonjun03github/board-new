@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const pool = require('../config/db'); //경로
 const AppError = require('../utils/AppError');
 
 // 글 목록 조회
@@ -21,6 +21,8 @@ const getPostById = async (id) => {
 
     await pool.query('UPDATE posts SET views = views + 1 WHERE id = ?', [id]);
     rows[0].views += 1;
+
+    views = views + 1;
 
     return rows[0];
 };
