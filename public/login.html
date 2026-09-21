@@ -6,27 +6,40 @@
 </head>
 <body>
 <button onclick="window.location.href='/register.html'">회원가입</button>
-<!-- 1. form 태그에 onsubmit 이벤트를 추가합니다 -->
-<form id="loginForm" onsubmit="handleLogin(event)">
+
+<!-- 1. autocomplete="on"을 명시하여 브라우저 자동완성 스트림을 정상화합니다 -->
+<form id="loginForm" onsubmit="handleLogin(event)" autocomplete="on">
     <h2>로그인</h2>
-    <input type="text" id="login-username" placeholder="아이디">
-    <input type="password" id="login-password" placeholder="비밀번호">
-    <!-- 2. 버튼의 onclick을 없애고 type="submit"으로 변경합니다 -->
+    <input type="text" id="login-username" name="username" placeholder="아이디" autocomplete="username">
+    <!-- 2. 비밀번호 창에 직접 엔터키 감지 이벤트(onkeydown)를 확실하게 심어줍니다 -->
+    <input type="password" id="login-password" name="password" placeholder="비밀번호" autocomplete="current-password" onkeydown="checkEnter(event)">
     <button type="submit">로그인</button>
 </form>
 
 <p id="message"></p>
 
 <script>
-    // 3. 엔터나 버튼 클릭 시 폼 전송(새로고침)을 막아주는 함수를 먼저 거칩니다
+    // 3. 브라우저가 자동완성 상태에서 엔터를 쳤을 때 씹히는 현상을 방지하는 서브 함수
+    function checkEnter(event) {
+        if (event.key === 'Enter') {
+            if (event.isComposing) return; // 한글 입력 중복 방지
+            event.preventDefault();
+            login(); // 즉시 로그인 실행
+        }
+    }
+
     function handleLogin(event) {
+        if (event.isComposing) return;
         event.preventDefault(); // 페이지 새로고침 방지
-        login(); // 실제 로그인 비동기 함수 실행
+        login();
     }
 
     async function login() {
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
+
+        // 아이디나 비밀번호가 비어있다면 자동완성이 아직 덜 읽힌 것일 수 있음
+        if (!username || !password) return;
 
         const res = await fetch('/auth/login', {
             method: 'POST',
