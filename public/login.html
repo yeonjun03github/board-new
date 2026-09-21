@@ -7,41 +7,43 @@
 <body>
 <button onclick="window.location.href='/register.html'">회원가입</button>
 
-<!-- 1. autocomplete="on"을 명시하여 브라우저 자동완성 스트림을 정상화합니다 -->
-<form id="loginForm" onsubmit="handleLogin(event)" autocomplete="on">
+<!-- 1. form 태그를 div로 변경하여 브라우저의 강제 새로고침 동작을 원천 차단합니다 -->
+<div id="loginForm">
     <h2>로그인</h2>
-    <input type="text" id="login-username" name="username" placeholder="아이디" autocomplete="username">
-    <!-- 2. 비밀번호 창에 직접 엔터키 감지 이벤트(onkeydown)를 확실하게 심어줍니다 -->
-    <input type="password" id="login-password" name="password" placeholder="비밀번호" autocomplete="current-password" onkeydown="checkEnter(event)">
-    <button type="submit">로그인</button>
-</form>
+    <input type="text" id="login-username" placeholder="아이디" onkeydown="checkEnter(event)">
+    <!-- 2. 비밀번호 창과 아이디 창 모두에서 엔터를 치면 checkEnter 함수가 실행됩니다 -->
+    <input type="password" id="login-password" placeholder="비밀번호" onkeydown="checkEnter(event)">
+    <!-- 3. 버튼 타입을 일반 button으로 지정합니다 -->
+    <button type="button" onclick="login()">로그인</button>
+</div>
 
 <p id="message"></p>
 
 <script>
-    // 3. 브라우저가 자동완성 상태에서 엔터를 쳤을 때 씹히는 현상을 방지하는 서브 함수
+    // 4. 엔터키를 감지하는 함수입니다
     function checkEnter(event) {
         if (event.key === 'Enter') {
-            if (event.isComposing) return; // 한글 입력 중복 방지
-            event.preventDefault();
-            login(); // 즉시 로그인 실행
-        }
-    }
+            // 한글 입력 중 엔터를 쳤을 때 발생하는 중복 트리거를 방지합니다
+            if (event.isComposing) return;
 
-    function handleLogin(event) {
-        if (event.isComposing) return;
-        event.preventDefault(); // 페이지 새로고침 방지
-        login();
+            login(); // 즉시 로그인 비동기 함수 실행
+        }
     }
 
     async function login() {
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
 
-        // 아이디나 비밀번호가 비어있다면 자동완성이 아직 덜 읽힌 것일 수 있음
-        if (!username || !password) return;
+        // 빈 값 검증 추가 (입력이 없을 때는 요청을 보내지 않음)
+        if (!username || !password) {
+            document.getElementById('message').innerText = "아이디와 비밀번호를 모두 입력해주세요.";
+            return;
+        }
 
-        const res = await fetch('/auth/login', {
+        // 현재 EC2 호스트 주소를 동적으로 바인딩하여 경로 꼬임 문제를 예방합니다
+        const host = window.location.origin;
+
+        const res = await fetch(`${host}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
