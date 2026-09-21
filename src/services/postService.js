@@ -22,8 +22,6 @@ const getPostById = async (id) => {
     await pool.query('UPDATE posts SET views = views + 1 WHERE id = ?', [id]);
     rows[0].views += 1;
 
-    views = views + 1;
-
     return rows[0];
 };
 
