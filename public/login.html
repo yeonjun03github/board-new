@@ -6,15 +6,24 @@
 </head>
 <body>
 <button onclick="window.location.href='/register.html'">회원가입</button>
-
-<h2>로그인</h2>
-<input type="text" id="login-username" placeholder="아이디">
-<input type="password" id="login-password" placeholder="비밀번호">
-<button onclick="login()">로그인</button>
+<!-- 1. form 태그에 onsubmit 이벤트를 추가합니다 -->
+<form id="loginForm" onsubmit="handleLogin(event)">
+    <h2>로그인</h2>
+    <input type="text" id="login-username" placeholder="아이디">
+    <input type="password" id="login-password" placeholder="비밀번호">
+    <!-- 2. 버튼의 onclick을 없애고 type="submit"으로 변경합니다 -->
+    <button type="submit">로그인</button>
+</form>
 
 <p id="message"></p>
 
 <script>
+    // 3. 엔터나 버튼 클릭 시 폼 전송(새로고침)을 막아주는 함수를 먼저 거칩니다
+    function handleLogin(event) {
+        event.preventDefault(); // 페이지 새로고침 방지
+        login(); // 실제 로그인 비동기 함수 실행
+    }
+
     async function login() {
         const username = document.getElementById('login-username').value;
         const password = document.getElementById('login-password').value;
