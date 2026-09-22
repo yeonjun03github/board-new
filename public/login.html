@@ -2,21 +2,35 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <title>환 영 합 니 다</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        .login-panel {
+            width: 740px;
+            height: 540px;
+            box-sizing: border-box;
+            padding: 20px;
+            background-color: #10b981;
+        }
+    </style>
 </head>
 <body>
-<button onclick="window.location.href='/register.html'">회원가입</button>
+<div class="login-panel">
+    <button onclick="window.location.href='/register.html'">회원가입</button>
 
-<!-- 1. form 태그를 다시 사용하되, js에서 submit 이벤트를 완전히 통제합니다 -->
-<form id="loginForm" autocomplete="on">
-    <h2>로그인</h2>
-    <!-- 인풋창에 일일이 onkeydown을 달지 않아도 됩니다 -->
-    <input type="text" id="login-username" name="username" placeholder="아이디" autocomplete="username">
-    <input type="password" id="login-password" name="password" placeholder="비밀번호" autocomplete="current-password">
-    <button type="submit">로그인</button>
-</form>
+    <!-- 1. form 태그를 다시 사용하되, js에서 submit 이벤트를 완전히 통제합니다 -->
+    <form id="loginForm" autocomplete="on">
+        <h2>환영합니다!<br>로그인하세요.</h2>
+        <!-- 인풋창에 일일이 onkeydown을 달지 않아도 됩니다 -->
+        <input type="text" id="login-username" name="username" placeholder="아이디" autocomplete="username">
+        <input type="password" id="login-password" name="password" placeholder="비밀번호" autocomplete="current-password">
+        <button type="submit">로그인</button>
+    </form>
 
-<p id="message"></p>
+    <p id="message"></p>
+</div>
 
 <script>
     const loginForm = document.getElementById('loginForm');
