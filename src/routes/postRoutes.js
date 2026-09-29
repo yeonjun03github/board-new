@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getPosts, getPost, createPost, updatePost, deletePost } = require('../controllers/postController');
+const { getLikes, toggleLike } = require('../controllers/likeController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const upload = require('../config/upload');
 
@@ -131,5 +132,43 @@ router.put('/:id', authMiddleware, updatePost);
  *         description: 글을 찾을 수 없음
  */
 router.delete('/:id', authMiddleware, deletePost);
+
+/**
+ * @swagger
+ * /posts/{id}/likes:
+ *   get:
+ *     summary: 좋아요 목록 조회
+ *     tags: [Posts]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: 좋아요 누른 사용자 목록
+ */
+router.get('/:id/likes', getLikes);
+
+/**
+ * @swagger
+ * /posts/{id}/likes:
+ *   post:
+ *     summary: 좋아요 토글 (눌러져 있으면 취소, 아니면 추가)
+ *     tags: [Posts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: "토글 결과 (liked: true 또는 false)"
+ */
+router.post('/:id/likes', authMiddleware, toggleLike);
 
 module.exports = router;

@@ -17,6 +17,7 @@
     <p>작성자: <span id="username"></span></p>
     <p>작성일: <span id="created-at"></span></p>
     <p>조회수: <span id="views"></span></p>
+    <button id="like-btn" onclick="toggleLike()">🤍 좋아요</button> <span id="like-count"></span>
     <hr>
     <p id="content"></p>
     <div id="image-container"></div>
@@ -72,6 +73,38 @@
         }
 
         return true;
+    }
+
+    async function loadLikes() {
+        const res = await fetch(`/posts/${id}/likes`);
+        const likes = await res.json();
+
+        document.getElementById('like-count').innerText = `${likes.length}명이 좋아합니다`;
+
+        const liked = myUserId !== null && likes.some(like => like.user_id === myUserId);
+        document.getElementById('like-btn').innerText = liked ? '❤️ 좋아요 취소' : '🤍 좋아요';
+    }
+
+    async function toggleLike() {
+        if (!token) {
+            alert('로그인이 필요합니다.');
+            window.location.href = '/login.html';
+            return;
+        }
+
+        const res = await fetch(`/posts/${id}/likes`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (res.status === 401) {
+            localStorage.removeItem('token');
+            alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
+            window.location.href = '/login.html';
+            return;
+        }
+
+        loadLikes();
     }
 
     async function loadComments() {
@@ -162,7 +195,10 @@
     }
 
     loadPost().then(found => {
-        if (found) loadComments();
+        if (found) {
+            loadComments();
+            loadLikes();
+        }
     });
 </script>
 </body>
