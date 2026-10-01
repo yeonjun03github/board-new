@@ -91,7 +91,7 @@ router.post('/', authMiddleware, upload.single('image'), createPost);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -99,6 +99,9 @@ router.post('/', authMiddleware, upload.single('image'), createPost);
  *                 type: string
  *               content:
  *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: 수정 완료
@@ -107,7 +110,7 @@ router.post('/', authMiddleware, upload.single('image'), createPost);
  *       404:
  *         description: 글을 찾을 수 없음
  */
-router.put('/:id', authMiddleware, updatePost);
+router.put('/:id', authMiddleware, upload.single('image'), updatePost);
 
 /**
  * @swagger

@@ -38,7 +38,7 @@ const createPost = async ({ title, content, image, user_id }) => {
 };
 
 // 글 수정
-const updatePost = async (id, { title, content, user_id }) => {
+const updatePost = async (id, { title, content, image, user_id }) => {
     const [rows] = await pool.query('SELECT * FROM posts WHERE id = ?', [id]);
     if (rows.length === 0) {
         throw new AppError(404, '글을 찾을 수 없습니다. 404');
@@ -47,9 +47,12 @@ const updatePost = async (id, { title, content, user_id }) => {
         throw new AppError(403, '본인 글만 수정할 수 있습니다. 403');
     }
 
+    // 새 이미지를 안 올렸으면(null) 기존 이미지를 그대로 유지
+    const newImage = image || rows[0].image;
+
     await pool.query(
-        'UPDATE posts SET title = ?, content = ? WHERE id = ?',
-        [title, content, id]
+        'UPDATE posts SET title = ?, content = ?, image = ? WHERE id = ?',
+        [title, content, newImage, id]
     );
 };
 

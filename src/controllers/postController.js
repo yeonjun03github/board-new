@@ -41,9 +41,10 @@ const updatePost = async (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
     const user_id = req.user.id;
+    const image = req.file ? '/uploads/' + req.file.filename : null;
 
     try {
-        await postService.updatePost(id, { title, content, user_id });
+        await postService.updatePost(id, { title, content, image, user_id });
         res.json({ message: '글 수정 완료' });
     } catch (error) {
         handleError(res, error);
