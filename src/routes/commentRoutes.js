@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getComments, createComment, deleteComment } = require('../controllers/commentController');
+const { getComments, createComment, deleteComment, updateComment } = require('../controllers/commentController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 /**
@@ -82,5 +82,40 @@ router.post('/:post_id', authMiddleware, createComment);
  *         description: 댓글을 찾을 수 없음
  */
 router.delete('/:id', authMiddleware, deleteComment);
+
+/**
+ * @swagger
+ * /comments/{id}:
+ *   put:
+ *     summary: 댓글 수정
+ *     tags: [Comments]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: 수정 완료
+ *       400:
+ *         description: 내용 누락
+ *       403:
+ *         description: 본인 댓글이 아님
+ *       404:
+ *         description: 댓글을 찾을 수 없음
+ */
+router.put('/:id', authMiddleware, updateComment);
 
 module.exports = router;

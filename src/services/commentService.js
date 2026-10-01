@@ -32,4 +32,23 @@ const deleteComment = async (id, user_id) => {
     await pool.query('DELETE FROM comments WHERE id = ?', [id]);
 };
 
-module.exports = { getComments, createComment, deleteComment };
+const updateComment = async (id, { content, user_id }) => {
+    if (!content) {
+        throw new AppError(400, '내용을 입력해주세요.');
+    }
+
+    const [rows] = await pool.query('SELECT * FROM comments WHERE id = ?', [id]);
+    if (rows.length === 0) {
+        throw new AppError(404, '댓글을 찾을 수 없습니다. 404');
+    }
+    if (rows[0].user_id !== user_id) {
+        throw new AppError(403, '본인 댓글만 수정할 수 있습니다. 403');
+    }
+
+    await pool.query(
+        'UPDATE comments SET content = ? WHERE id = ?',
+        [content, id]
+    );
+};
+
+module.exports = { getComments, createComment, deleteComment, updateComment };

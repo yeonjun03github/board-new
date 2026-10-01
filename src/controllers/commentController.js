@@ -36,4 +36,18 @@ const deleteComment = async (req, res) => {
     }
 };
 
-module.exports = { getComments, createComment, deleteComment };
+// 댓글 수정
+const updateComment = async (req, res) => {
+    const { id } = req.params;
+    const { content } = req.body;
+    const user_id = req.user.id;
+
+    try {
+        await commentService.updateComment(id, { content, user_id });
+        res.json({ message: '댓글 수정 완료' });
+    } catch (error) {
+        handleError(res, error);
+    }
+};
+
+module.exports = { getComments, createComment, deleteComment, updateComment };

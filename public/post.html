@@ -118,8 +118,11 @@
         data.forEach(comment => {
             const div = document.createElement('div');
             div.innerHTML = `
-                <p><strong>${comment.username}</strong>: ${comment.content}</p>
-                ${myUserId == comment.user_id ? `<button onclick="removeComment(${comment.id})">삭제</button>` : ''}
+                <p><strong>${comment.username}</strong>: <span id="comment-content-${comment.id}">${comment.content}</span></p>
+                ${myUserId == comment.user_id ? `
+                    <button onclick="editComment(${comment.id})">수정</button>
+                    <button onclick="removeComment(${comment.id})">삭제</button>
+                ` : ''}
                 <hr>
             `;
             container.appendChild(div);
@@ -149,6 +152,33 @@
         const data = await res.json();
         alert(data.message);
         document.getElementById('comment-input').value = '';
+        loadComments();
+    }
+
+    async function editComment(commentId) {
+        const span = document.getElementById(`comment-content-${commentId}`);
+        const newContent = prompt('댓글을 수정하세요', span.innerText);
+        if (newContent === null) return;
+        if (!newContent.trim()) return alert('내용을 입력해주세요.');
+
+        const res = await fetch(`/comments/${commentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ content: newContent })
+        });
+
+        if (res.status === 401) {
+            localStorage.removeItem('token');
+            alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
+            window.location.href = '/login.html';
+            return;
+        }
+
+        const data = await res.json();
+        alert(data.message);
         loadComments();
     }
 
