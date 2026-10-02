@@ -6,10 +6,17 @@
 </head>
 <body>
 <h2>게시판</h2>
-<span id="username-display" style="color: blue; font-weight: bold;"></span>
-<button onclick="window.location.href='/write.html'">글 작성</button>
-<button onclick="logout()">로그아웃</button>
-<h1> </h1>
+
+<div>
+<span id="username-display"
+      style="color: blue; font-weight: bold;"></span>
+</div>
+
+<div style="margin-top: 10px; margin-bottom: 20px;">
+    <button onclick="window.location.href='/write.html'">글 작성</button>
+    <button onclick="logout()">로그아웃</button>
+</div>
+
 <table border="1">
     <thead>
     <tr>
@@ -111,7 +118,8 @@
     const token = localStorage.getItem('token');
     if (token) {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        document.getElementById('username-display').innerText = payload.username;
+        document.getElementById('username-display').innerText =
+            `${payload.username}님, 환영합니다`;
     }
 
     window.addEventListener('pageshow', loadPosts);
